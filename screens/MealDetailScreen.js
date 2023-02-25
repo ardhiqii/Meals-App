@@ -1,14 +1,25 @@
-import { Button, Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Button,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { MEALS } from "../data/dummy-data";
 import MealDetails from "../components/MealDetails";
 import Subtitle from "../components/MealDetail/Subtitle";
 import List from "../components/MealDetail/List";
-import { useLayoutEffect } from "react";
+import { useContext, useLayoutEffect } from "react";
 import IconButton from "../components/IconButton";
+import { FavoritesContext } from "../store/context/favorites-context";
 
-function MealDetailScreen({ route,navigation }) {
+function MealDetailScreen({ route, navigation }) {
+  const favoriteMealsCtx = useContext(FavoritesContext);
+
   const mealId = route.params.mealId;
   const selectedMeal = MEALS.find((meal) => meal.id === mealId);
+  const mealIsFavorite = favoriteMealsCtx.ids.includes(mealId);
   const {
     imageUrl,
     title,
@@ -19,17 +30,28 @@ function MealDetailScreen({ route,navigation }) {
     steps,
   } = selectedMeal;
 
-  function headerButtonPressHandler(){
-    console.log('Pressed!');
+  function changeFavoriteStatusHandler() {
+    if (mealIsFavorite) {
+      favoriteMealsCtx.removeFavorite(mealId);
+    } else {
+      favoriteMealsCtx.addFavorite(mealId);
+    }
   }
 
-  useLayoutEffect(()=>{
+  useLayoutEffect(() => {
     navigation.setOptions({
-        headerRight:()=>{
-            return <IconButton icon="heart" color='#ed4956' onPress={headerButtonPressHandler}/>
-        }
-    })
-  },[navigation,headerButtonPressHandler])
+      headerRight: () => {
+        return (
+          <IconButton
+            icon={mealIsFavorite ? "heart" : "heart-outline"}
+            
+            color={mealIsFavorite ? '#ed4956' :"black"}
+            onPress={changeFavoriteStatusHandler}
+          />
+        );
+      },
+    });
+  }, [navigation, changeFavoriteStatusHandler]);
   return (
     <ScrollView style={styles.rootcontainer}>
       <Image source={{ uri: imageUrl }} style={styles.image} />
@@ -53,9 +75,9 @@ function MealDetailScreen({ route,navigation }) {
 export default MealDetailScreen;
 
 const styles = StyleSheet.create({
-    rootcontainer:{
-        marginBottom:32,
-    },
+  rootcontainer: {
+    marginBottom: 32,
+  },
   image: {
     width: "100%",
     height: 350,
@@ -66,8 +88,8 @@ const styles = StyleSheet.create({
     margin: 8,
     textAlign: "center",
   },
-  listOuterContainer:{
-    alignItems:'center'
+  listOuterContainer: {
+    alignItems: "center",
   },
   listContainer: {
     width: "80%",

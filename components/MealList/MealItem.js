@@ -7,7 +7,7 @@ import {
   Text,
   View,
 } from "react-native";
-import MealDetails from "./MealDetails";
+import MealDetails from "../MealDetails";
 
 function MealItem({
   id,
@@ -36,7 +36,11 @@ function MealItem({
             <Image source={{ uri: imageUrl }} style={styles.image} />
             <Text style={styles.title}>{title}</Text>
           </View>
-          <MealDetails duration={duration} affordability={affordability} complexity={complexity} />
+          <MealDetails
+            duration={duration}
+            affordability={affordability}
+            complexity={complexity}
+          />
         </View>
       </Pressable>
     </View>
@@ -72,7 +76,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     margin: 8,
   },
- 
+
   buttonPressed: {
     opacity: 0.5,
   },
